@@ -32,7 +32,32 @@ The network consists of a contracting path and an expansive path, which gives it
 A Sample architecture of U-Net[4] :
 ![image](https://user-images.githubusercontent.com/21982402/130319547-e4349958-b3ac-407d-b2bd-36040b09d61c.png)
 
+Decoder Network:
+Input the network is 128x128x1
+There are 2, 3x3 Conv2D (16 layers) with valid padding followed by 2x2 max pooling layers in a set. The activation function used after each Conv layers is ‘LeakyReLU’. After each max pooling layer, the size of the 1st and the 2nd dimension is reduced by half and the convolutional layers are doubled.
+This is because the max pooling layer has a stride of 2.
+There are 4 such sets in the decoder network. In the last set, there is a dropout before the max pooling layer. 2 more 3x3 Con2D (256 layers) filters are present after the 4 sets followed by a 2nd dropout. 
+The output of the encoder network is 8x8x256
+
+Encoder Network:
+Input the network is 8x8x256(output of dropout_1)
+A single set consists of an up-sampling layer followed by a 2x2 Conv2D (128 layers) filter with valid padding. This followed by a concatenation layer which combines the weights of the preceding conv layer with the dropout from the last set of the decoder network. The output of the concatenate layer is followed by 2 3x3 Conv2D (128 layers) filters. These 5 layers make one set. The activation function used after each Conv layers is ‘LeakyReLU’. 
+After each up-sampling, the size of the 1st and the 2nd dimension is doubled, and the convolutional layers are halved.
+There are 4 such sets in the decoder network. 
+Finally, a 3x3 conv2D (2 layers) filter is applied followed by a 1x1 Conv2D(1layer) filter to get the desired array shape.
+The output of the encoder network is 128x128x1.
+
+Training on Google Colaboratory
+
+Google Colaboratory or ‘Colab’ is a free Jupyter notebook environment running on the cloud complete with RAM, Hard disk, and processing units like CPU/GPU/TPU. 
+Availability of GPU/TPU can vastly reduce the training time.
+Colab has popularly used python libraries of data science, machine learning etc already installed.
+It has the feature to link a personal Google Drive. Thus, the dataset was uploaded to the drive so that it can be easily loaded on Colab and the trained model weights can also be saved easily.
+
+The U-Net model took around 3 hours to train 60 epochs on the GPU on a dataset of 21000 training samples and 1179 validation samples.
+
 **Result**
+
 ![image](https://user-images.githubusercontent.com/21982402/130319560-534ff966-370b-45b6-ae38-23719e7b9b90.png)
 
 References/Sources for audio denoising:
